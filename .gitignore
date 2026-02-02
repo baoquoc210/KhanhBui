@@ -1,0 +1,19 @@
+.next/
+node_modules/
+out/
+dist/
+
+.DS_Store
+*.log
+
+# Env files
+.env
+.env.*.local
+
+# Vercel
+.vercel/
+
+# Local reference snapshots (not needed for deploy)
+_reference_*.html
+_ssr_*.html
+_reference_app.css
