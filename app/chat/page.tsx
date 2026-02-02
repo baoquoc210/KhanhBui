@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { Bot, MessageCircle, Send, Sparkles } from "lucide-react";
 import {
   useCallback,
@@ -35,8 +34,6 @@ function nowTime() {
 export default function ChatPage() {
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const shouldAutoScrollRef = useRef(true);
-  const searchParams = useSearchParams();
-  const prefill = searchParams.get("prefill");
   const appliedPrefillRef = useRef<string | null>(null);
 
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
@@ -69,7 +66,7 @@ export default function ChatPage() {
   const sendMessage = useCallback((text: string) => {
     const trimmed = text.trim();
     if (!trimmed) return;
-    shouldAutoScrollRef.current = true;
+    shouldAutoScrollRef.current = isNearBottom();
     setMessages((prev) => {
       const userMessage: ChatMessage = {
         id: `m${prev.length + 1}`,
@@ -91,12 +88,14 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
-    const trimmed = prefill?.trim();
+    const trimmed = new URLSearchParams(window.location.search)
+      .get("prefill")
+      ?.trim();
     if (!trimmed) return;
     if (appliedPrefillRef.current === trimmed) return;
     appliedPrefillRef.current = trimmed;
     sendMessage(trimmed);
-  }, [prefill, sendMessage]);
+  }, [sendMessage]);
 
   useLayoutEffect(() => {
     const el = scrollAreaRef.current;
